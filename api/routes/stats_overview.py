@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI # type: ignore
 from typing import List, Dict
-from pydantic import BaseModel
+from pydantic import BaseModel # type: ignore
 from collections import Counter
 
 app = FastAPI()
@@ -27,7 +27,7 @@ def stats_overview():
     ratings = [book.rating for book in books_db]
     rating_distribution = dict(Counter(ratings))
     return {
-        "total_books": total_books,
-        "average_price": avg_price,
-        "rating_distribution": rating_distribution
+        "Total de Livros": total_books,
+        "Média de Preço": avg_price,
+        "Distribuição de Ratings": rating_distribution
     }
