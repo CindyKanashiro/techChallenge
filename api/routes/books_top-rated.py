@@ -1,10 +1,22 @@
 from fastapi import FastAPI # type: ignore
 from pydantic import BaseModel # type: ignore
 from typing import List
+from sqlalchemy import Column, Integer, String, Float # type: ignore
+from sqlalchemy.orm import Session # type: ignore
+from database import SessionLocal, Base
 
 app = FastAPI()
 
-# Modelo de Livro
+# Modelo ORM
+class BookORM(Base):
+    __tablename__ = "books"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    price = Column(Float)
+    rating = Column(Integer)
+    category = Column(String)
+
+# Modelo Pydantic
 class Book(BaseModel):
     id: int
     title: str
@@ -12,19 +24,23 @@ class Book(BaseModel):
     rating: int
     category: str
 
-# Exemplo de coleção de livros
-books_db = [
-    Book(id=1, title="Livro A", price=50.0, rating=4, category="Ficção"),
-    Book(id=2, title="Livro B", price=70.0, rating=5, category="Ficção"),
-    Book(id=3, title="Livro C", price=40.0, rating=3, category="Tecnologia"),
-    Book(id=4, title="Livro D", price=60.0, rating=4, category="Tecnologia"),
-    Book(id=5, title="Livro E", price=80.0, rating=5, category="Negócios"),
-]
-
 @app.get("/api/v1/books/top-rated", response_model=List[Book])
 def get_top_rated_books():
-    if not books_db:
+    db: Session = SessionLocal()
+    books = db.query(BookORM).all()
+    if not books:
+        db.close()
         return []
-    max_rating = max(book.rating for book in books_db)
-    top_books = [book for book in books_db if book.rating == max_rating]
+    max_rating = max(book.rating for book in books)
+    top_books = [
+        Book(
+            id=book.id,
+            title=book.title,
+            price=book.price,
+            rating=book.rating,
+            category=book.category
+        )
+        for book in books if book.rating == max_rating
+    ]
+    db.close()
     return top_books

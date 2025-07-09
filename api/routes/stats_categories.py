@@ -1,10 +1,22 @@
 from fastapi import FastAPI # type: ignore
 from collections import defaultdict
 from pydantic import BaseModel # type: ignore
+from sqlalchemy import Column, Integer, String, Float # type: ignore
+from sqlalchemy.orm import Session # type: ignore
+from database import SessionLocal, Base
 
 app = FastAPI()
 
-# Modelo de Livro com categoria
+# Modelo ORM
+class BookORM(Base):
+    __tablename__ = "books"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    price = Column(Float)
+    rating = Column(Integer)
+    category = Column(String)
+
+# Modelo Pydantic
 class BookWithCategory(BaseModel):
     id: int
     title: str
@@ -12,19 +24,12 @@ class BookWithCategory(BaseModel):
     rating: int
     category: str
 
-# Exemplo de coleção de livros com categoria
-books_db = [
-    BookWithCategory(id=1, title="Livro A", price=50.0, rating=4, category="Ficção"),
-    BookWithCategory(id=2, title="Livro B", price=70.0, rating=5, category="Ficção"),
-    BookWithCategory(id=3, title="Livro C", price=40.0, rating=3, category="Tecnologia"),
-    BookWithCategory(id=4, title="Livro D", price=60.0, rating=4, category="Tecnologia"),
-    BookWithCategory(id=5, title="Livro E", price=80.0, rating=5, category="Negócios"),
-]
-
 @app.get("/api/v1/stats/categories")
 def stats_by_category():
+    db: Session = SessionLocal()
+    books = db.query(BookORM).all()
     category_stats = defaultdict(lambda: {"quantidade": 0, "preço total": 0.0, "média de preço": 0.0})
-    for book in books_db:
+    for book in books:
         cat = book.category
         category_stats[cat]["quantidade"] += 1
         category_stats[cat]["preço total"] += book.price
@@ -33,4 +38,5 @@ def stats_by_category():
         count = category_stats[cat]["quantidade"]
         total = category_stats[cat]["preço total"]
         category_stats[cat]["média de preço"] = total / count if count > 0 else 0
+    db.close()
     return category_stats

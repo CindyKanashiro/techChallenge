@@ -1,31 +1,38 @@
 from fastapi import FastAPI # type: ignore
-from typing import List, Dict
+from typing import Dict
 from pydantic import BaseModel # type: ignore
 from collections import Counter
+from sqlalchemy import Column, Integer, String, Float # type: ignore
+from sqlalchemy.orm import Session # type: ignore
+from database import SessionLocal, Base
 
 app = FastAPI()
 
-# Modelo de Livro
+# Modelo ORM
+class BookORM(Base):
+    __tablename__ = "books"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    price = Column(Float)
+    rating = Column(Integer)
+    category = Column(String)
+
+# Modelo Pydantic
 class Book(BaseModel):
     id: int
     title: str
     price: float
     rating: int  # Exemplo: 1 a 5
 
-# Exemplo de coleção de livros
-books_db = [
-    Book(id=1, title="Livro A", price=50.0, rating=4),
-    Book(id=2, title="Livro B", price=70.0, rating=5),
-    Book(id=3, title="Livro C", price=40.0, rating=3),
-    Book(id=4, title="Livro D", price=60.0, rating=4),
-]
-
 @app.get("/api/v1/stats/overview")
-def stats_overview():
-    total_books = len(books_db)
-    avg_price = sum(book.price for book in books_db) / total_books if total_books > 0 else 0
-    ratings = [book.rating for book in books_db]
+def stats_overview() -> Dict:
+    db: Session = SessionLocal()
+    books = db.query(BookORM).all()
+    total_books = len(books)
+    avg_price = sum(book.price for book in books) / total_books if total_books > 0 else 0
+    ratings = [book.rating for book in books]
     rating_distribution = dict(Counter(ratings))
+    db.close()
     return {
         "Total de Livros": total_books,
         "Média de Preço": avg_price,
