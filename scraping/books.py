@@ -1,8 +1,17 @@
+from typing import Literal
 import pandas as pd
 import requests
 from urllib.parse import urljoin
 from scraping.utils import fetch_soup
 import re
+import sqlite3
+
+
+def download_catalogue_data():
+    """Download the book catalogue data and save it as a SQLite table."""
+
+    df = fetch_catalogue_data()
+    save_catalogue_data_as_sqlite_table(df)
 
 
 def fetch_catalogue_data() -> pd.DataFrame:
@@ -109,3 +118,27 @@ def fetch_book_details(book_url: str) -> dict:
         "category": category,
         "cover": cover,
     }
+
+
+def save_catalogue_data_as_sqlite_table(
+    df: pd.DataFrame,
+    db_path: str = "books.db",
+    if_exists: Literal["fail", "replace", "append"] = "replace",
+) -> None:
+    """Save the DataFrame containing book details as a table in a SQLite database.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing book details.
+        db_path (str, optional): path to the sqlite database file. Defaults to
+        "books.db".
+        if_exists (Literal["fail", "replace", "append"], optional): behavior
+        when the table already exists. Defaults to "replace".
+    """
+
+    with sqlite3.connect(db_path) as conn:
+        df.to_sql(
+            "books",
+            conn,
+            if_exists=if_exists,
+            index=False,
+        )
