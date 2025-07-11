@@ -5,15 +5,18 @@ from scraping.utils import fetch_soup
 import re
 
 
-def fetch_catalogue_data(catalogue_url: str) -> pd.DataFrame:
+def fetch_catalogue_data() -> pd.DataFrame:
     """Fetch all book data from the catalogue pages.
 
     Args:
         catalogue_url (str): the base URL of the catalogue pages.
 
     Returns:
-        pd.DataFrame: a DataFrame containing details of all books in the catalogue.
+        pd.DataFrame: a DataFrame containing details of all books in the
+        catalogue.
     """
+
+    catalogue_url = "http://books.toscrape.com/catalogue/"
 
     df = pd.DataFrame(
         columns=["title", "price", "rating", "stock", "category", "cover"]
@@ -24,7 +27,6 @@ def fetch_catalogue_data(catalogue_url: str) -> pd.DataFrame:
     for book_url in book_urls:
         book_details = fetch_book_details(book_url)
         df = pd.concat([df, pd.DataFrame([book_details])], ignore_index=True)
-
     return df
 
 
@@ -39,6 +41,7 @@ def fetch_book_urls(catalogue_url: str) -> list[str]:
     """
 
     book_urls = []
+
     number_of_pages = int(
         fetch_soup(urljoin(catalogue_url, "page-1.html"))
         .select_one("ul.pager li.current")
@@ -69,15 +72,15 @@ def fetch_book_details(book_url: str) -> dict:
         dict: a dictionary containing the book's title, price, rating, stock,
         category, and cover image.
     """
-
     soup = fetch_soup(book_url)
 
     title = soup.select_one("div.product_main h1").get_text(strip=True)
 
-    price = (
+    price = float(
         soup.find("th", string="Price (incl. tax)")
         .find_next_sibling("td")
         .get_text(strip=True)
+        .removeprefix("£")  # remove o símbolo da moeda
     )
 
     rating_classes = {"One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5}
