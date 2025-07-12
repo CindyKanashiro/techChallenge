@@ -48,6 +48,7 @@ bash
 Copiar
 Editar
 pip install -r requirements.txt
+
 ▶️ Rodando a API
 Execute a API com:
 
@@ -55,7 +56,6 @@ uvicorn api.main:app --reload
 Acesse:
 
 📘 Swagger: http://localhost:8000/docs
-
 📘 Redoc: http://localhost:8000/redoc
 
 🔍 Endpoints principais
@@ -68,6 +68,7 @@ GET	/api/v1/books/search	Busca por livros por título, autor e categoria
 📌 Exemplos de uso:
 GET /api/v1/books/search?title=python&category=tecnologia
 GET /api/v1/health
+
 📈 Visualizar métricas no dashboard
 Execute:
 streamlit run dashboard.py
