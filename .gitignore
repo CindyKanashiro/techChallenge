@@ -1,0 +1,11 @@
+# Ignorar pastas de ambiente virtual
+lib/
+share/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.projeto_ml_fase1/
+
