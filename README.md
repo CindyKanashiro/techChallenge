@@ -24,8 +24,7 @@ Ela também expõe uma rota para busca de livros fictícios e grava logs estrutu
 
 fastapi_project/
 
-│
-
+│                                                   
 ├── api/
 
 │   ├── __init__.py
