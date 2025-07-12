@@ -4,49 +4,68 @@ Uma aplicação desenvolvida com FastAPI para monitorar o status da API, registr
 Ela também expõe uma rota para busca de livros fictícios e grava logs estruturados e métricas de chamadas HTTP em um banco SQLite.
 
 🔧 Tecnologias utilizadas
+
 ✅ Python 3.8+
+
 ✅ FastAPI
+
 ✅ Uvicorn
+
 ✅ SQLite
+
 ✅ Streamlit
+
 ✅ Plotly (gráficos)
+
 ✅ Logging JSON estruturado
 
 📁 Estrutura do Projeto
 
 fastapi_project/
+
 │
+
 ├── api/
+
 │   ├── __init__.py
+
 │   ├── main.py             # Inicialização da API e middleware de logs/métricas
+
 │   ├── db.py               # Operações no SQLite
+
 │   └── routes/
+
 │       ├── __init__.py
+
 │       ├── health.py       # /health, /metrics e /metrics/detailed
+
 │       └── books.py        # /books/search com dados fictícios
+
 │
 ├── dashboard.py            # Painel interativo Streamlit
+
 ├── requirements.txt        # Dependências do projeto
+
 ├── metrics.db              # Banco SQLite (gerado em tempo de execução)
+
 ├── api.log                 # Log em formato JSON (gerado automaticamente)
 
 🚀 Como instalar e rodar
 
 1. Clone o repositório
+2. 
 git clone git@github.com:CindyKanashiro/techChallenge.git
 cd techChallenge
 git checkout API-Health-Metrics
-3. Crie e ative um ambiente virtual
-bash
-Copiar
-Editar
+
+4. Crie e ative um ambiente virtual
+
 python3 -m venv venv
 source venv/bin/activate     # Linux/macOS
 venv\Scripts\activate        # Windows
-4. Instale as dependências
-bash
-Copiar
-Editar
+
+5. Instale as dependências
+
 pip install -r requirements.txt
 
 ▶️ Rodando a API
