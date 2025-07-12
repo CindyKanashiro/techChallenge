@@ -22,33 +22,7 @@ Ela também expõe uma rota para busca de livros fictícios e grava logs estrutu
 
 📁 Estrutura do Projeto
 
-fastapi_project/
-
-│                                                   
-├── api/
-
-│   ├── __init__.py
-
-│   ├── main.py             # Inicialização da API e middleware de logs/métricas
-
-│   ├── db.py               # Operações no SQLite
-
-│   └── routes/
-
-│       ├── __init__.py
-
-│       ├── health.py       # /health, /metrics e /metrics/detailed
-
-│       └── books.py        # /books/search com dados fictícios
-
-│
-├── dashboard.py            # Painel interativo Streamlit
-
-├── requirements.txt        # Dependências do projeto
-
-├── metrics.db              # Banco SQLite (gerado em tempo de execução)
-
-├── api.log                 # Log em formato JSON (gerado automaticamente)
+<img width="775" height="445" alt="figura 1" src="https://github.com/user-attachments/assets/3bfe3c66-cbd5-4bab-8751-b0bd5e47c8f1" />
 
 🚀 Como instalar e rodar
 
