@@ -1,0 +1,6 @@
+from os import getenv
+
+
+SECRET_KEY = getenv('SECRET_KEY')
+ALGORITHM = getenv('ALGORITHM')
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
