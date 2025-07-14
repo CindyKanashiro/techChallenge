@@ -1,2 +1,5 @@
 fastapi
 uvicorn[standard]
+black
+flake8
+isort
