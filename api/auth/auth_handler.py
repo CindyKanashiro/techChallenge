@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict
-from fastapi import HTTPException, status
+from typing import Annotated, Any, Dict
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 import jwt
 
@@ -13,6 +14,7 @@ from settings import (
     ADMIN_EMAIL,
 )
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def verify_password(plain_password, hashed_password):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -52,3 +54,22 @@ def refresh_token_jwt(token: str):
             detail="Token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+
+async def check_user_is_authenticate(
+    token: Annotated[str, Depends(oauth2_scheme)]
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        return "OK"
+    except jwt.InvalidTokenError:
+        raise credentials_exception
+    
