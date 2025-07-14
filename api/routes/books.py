@@ -1,11 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from api.models import Book
+from api.database import books_db
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
 
-@router.get("/")
+@router.get("/", response_model=list[Book])
 def list_books():
-    return [
-        {"title": "1984", "author": "George Orwell"},
-        {"title": "Clean Code", "author": "Robert C. Martin"},
-    ]
+    return books_db
+
+
+@router.get("/{book_id}", response_model=Book)
+def get_book(book_id: int):
+    for book in books_db:
+        if book.id == book_id:
+            return book
+    raise HTTPException(status_code=404, detail="Book not found")
+
+
+@router.get("/categories", response_model=list[str])
+def list_categories():
+    categories = list({book.category for book in books_db if book.category})
+    return sorted(categories)
