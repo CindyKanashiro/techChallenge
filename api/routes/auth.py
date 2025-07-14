@@ -14,7 +14,7 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-@router.post("/login", tags=["Auth"])
+@router.post("/login")
 async def get_jwt_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
@@ -30,7 +30,7 @@ async def get_jwt_token(
         )
 
 
-@router.post("/refresh", tags=["Auth"])
+@router.post("/refresh")
 async def get_jwt_token(token: Annotated[str, Depends(oauth2_scheme)]) -> Token:
     access_token = refresh_token_jwt(token)
     return Token(access_token=access_token, token_type="Bearer")
