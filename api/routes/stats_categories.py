@@ -1,8 +1,9 @@
-from fastapi import FastAPI  # type: ignore
+from fastapi import FastAPI, HTTPException  # type: ignore
 from collections import defaultdict
 from pydantic import BaseModel  # type: ignore
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from sqlalchemy.exc import OperationalError # type: ignore
 from database import SessionLocal, Base
 
 app = FastAPI(
@@ -44,7 +45,20 @@ def stats_by_category():
     - **média de preço**: média dos preços dos livros na categoria
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).all()
+    try:
+        books = db.query(BookORM).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
+    if not books:
+        db.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro cadastrado no banco de dados."
+        )
     category_stats = defaultdict(
         lambda: {"quantidade": 0, "preço total": 0.0, "média de preço": 0.0}
     )

@@ -1,8 +1,9 @@
-from fastapi import FastAPI  # type: ignore
+from fastapi import FastAPI, HTTPException # type: ignore
 from pydantic import BaseModel  # type: ignore
 from typing import List
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from sqlalchemy.exc import OperationalError  # type: ignore
 from database import SessionLocal, Base
 
 app = FastAPI(
@@ -33,22 +34,31 @@ class Book(BaseModel):
     "/api/v1/books/top-rated",
     response_model=List[Book],
     summary="Buscar livros com maior avaliação",
-    description="Retorna uma lista de livros com a maior nota de avaliação.",
-    response_description="Lista de livros com maior avaliação"
+    description="Retorna uma lista dos 10 livros com a maior nota de avaliação.",
+    response_description="Lista dos 10 livros com maior avaliação"
 )
 def get_top_rated_books():
     """
-    Busca livros com maior avaliação.
+    Busca os 10 livros com maior avaliação.
 
-    - Retorna: lista de livros com nota de avaliação maior entre todos os livros cadastrados.
+    - Retorna: lista dos 10 livros com nota de avaliação maior entre todos os livros cadastrados.
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).all()
+    try:
+        books = db.query(BookORM).order_by(BookORM.rating.desc(), BookORM.id.asc()).limit(10).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
     if not books:
         db.close()
-        return []
-    max_rating = max(book.rating for book in books)
-    top_books = [
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro encontrado para avaliação."
+        )
+    result = [
         Book(
             id=book.id,
             title=book.title,
@@ -56,7 +66,7 @@ def get_top_rated_books():
             rating=book.rating,
             category=book.category,
         )
-        for book in books if book.rating == max_rating
+        for book in books
     ]
     db.close()
-    return top_books
+    return result

@@ -1,9 +1,10 @@
-from fastapi import FastAPI  # type: ignore
+from fastapi import FastAPI, HTTPException  # type: ignore
 from typing import Dict
 from pydantic import BaseModel  # type: ignore
 from collections import Counter
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from sqlalchemy.exc import OperationalError  # type: ignore
 from database import SessionLocal, Base
 
 app = FastAPI(
@@ -44,8 +45,21 @@ def stats_overview() -> Dict:
     - **Distribuição de Ratings**: quantidade de livros por nota de avaliação
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).all()
+    try:
+        books = db.query(BookORM).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
     total_books = len(books)
+    if total_books == 0:
+        db.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro cadastrado no banco de dados."
+        )
     avg_price = (
         sum(book.price for book in books) / total_books if total_books > 0 else 0
     )
