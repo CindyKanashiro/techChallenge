@@ -1,5 +1,28 @@
-# Python cache files
-__pycache__/
-
-# Python virtual environment
+# Ambiente virtual
 venv/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Configs de IDEs
+.vscode/
+.idea/
+
+# Arquivos sensíveis
+.env
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.swp
+.DS_Store
+
+
+# Cache de ferramentas de lint/format
+.cache/
+.mypy_cache/
+.pytest_cache/
+.dmypy.json
