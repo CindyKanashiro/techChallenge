@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException # type: ignore
+from fastapi import APIRouter, HTTPException  # type: ignore
 from pydantic import BaseModel  # type: ignore
 from typing import List
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
@@ -6,12 +6,10 @@ from sqlalchemy.orm import Session  # type: ignore
 from sqlalchemy.exc import OperationalError  # type: ignore
 from database import SessionLocal, Base
 
-app = FastAPI(
-    title="Book Top Rated API",
-    description="API para buscar livros com maior avaliação.",
-    version="1.0.0"
+router = APIRouter(
+    prefix="/api/v1/books",
+    tags=["top-rated"]
 )
-
 
 class BookORM(Base):
     __tablename__ = "books"
@@ -21,7 +19,6 @@ class BookORM(Base):
     rating = Column(Integer)
     category = Column(String)
 
-
 class Book(BaseModel):
     id: int
     title: str
@@ -29,9 +26,8 @@ class Book(BaseModel):
     rating: int
     category: str
 
-
-@app.get(
-    "/api/v1/books/top-rated",
+@router.get(
+    "/top-rated",
     response_model=List[Book],
     summary="Buscar livros com maior avaliação",
     description="Retorna uma lista dos 10 livros com a maior nota de avaliação.",

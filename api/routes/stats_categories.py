@@ -1,25 +1,15 @@
-from fastapi import FastAPI, HTTPException  # type: ignore
+from fastapi import APIRouter, HTTPException # type: ignore
 from collections import defaultdict
 from pydantic import BaseModel  # type: ignore
-from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
-from sqlalchemy.exc import OperationalError # type: ignore
-from database import SessionLocal, Base
+from sqlalchemy.exc import OperationalError  # type: ignore
+from database import SessionLocal  # type: ignore
+from models import BookORM  # type: ignore
 
-app = FastAPI(
-    title="Book Categories Stats API",
-    description="API para estatísticas de livros por categoria.",
-    version="1.0.0",
+router = APIRouter(
+    prefix="/api/v1/categories",
+    tags=["categories"]
 )
-
-
-class BookORM(Base):
-    __tablename__ = "books"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    price = Column(Float)
-    rating = Column(Integer)
-    category = Column(String)
 
 
 class BookWithCategory(BaseModel):
@@ -30,11 +20,10 @@ class BookWithCategory(BaseModel):
     category: str
 
 
-@app.get(
-    "/api/v1/stats/categories",
+@router.get(
+    "/stats",
     summary="Estatísticas por categoria",
-    description="Retorna estatísticas agregadas de livros por categoria, incluindo quantidade, preço total e média de preço.",
-    response_description="Estatísticas por categoria",
+    description="Retorna estatísticas agregadas de livros por categoria.",
 )
 def stats_by_category():
     """
