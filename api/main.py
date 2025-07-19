@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from routes import auth, scraping
 from routes.books import router as books_router
+from routes.books import router as books_router
 
 
 app = FastAPI(title="Books API", version="1.0")
