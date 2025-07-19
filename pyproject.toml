@@ -24,3 +24,21 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^6.0.1"
+flake8 = "^7.3.0"
+black = "^25.1.0"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.flake8]
+max-line-length = 88
+exclude = ["__pycache__", "migrations", "venv", ".venv"]
