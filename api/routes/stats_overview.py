@@ -1,24 +1,16 @@
-from fastapi import APIRouter, HTTPException # type: ignore
+from fastapi import APIRouter, HTTPException
 from typing import Dict
-from pydantic import BaseModel  # type: ignore
+from pydantic import BaseModel
 from collections import Counter
-from sqlalchemy import Column, Integer, String, Float  # type: ignore
-from sqlalchemy.orm import Session  # type: ignore
-from sqlalchemy.exc import OperationalError  # type: ignore
-from database import SessionLocal, Base
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+from database import SessionLocal
+from models import BookORM  
 
 router = APIRouter(
     prefix="/api/v1/stats",
     tags=["overview"]
 )
-
-class BookORM(Base):
-    __tablename__ = "books"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    price = Column(Float)
-    rating = Column(Integer)
-    category = Column(String)
 
 class Book(BaseModel):
     id: int

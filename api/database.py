@@ -1,25 +1,7 @@
-# from models import Book
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# books_db = [
-#     Book(
-#         id=1,
-#         title="Clean Code",
-#         author="Robert C. Martin",
-#         year=2008,
-#         category="Software Engineering",
-#     ),
-#     Book(
-#         id=2,
-#         title="Domain-Driven Design",
-#         author="Eric Evans",
-#         year=2003,
-#         category="Architecture",
-#     ),
-#     Book(
-#         id=3,
-#         title="The Pragmatic Programmer",
-#         author="Andy Hunt",
-#         year=1999,
-#         category="Software Engineering",
-#     ),
-# ]
+DATABASE_URL = "sqlite:///./books.db"
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
