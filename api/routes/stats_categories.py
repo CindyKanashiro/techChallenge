@@ -1,16 +1,15 @@
-from fastapi import APIRouter, HTTPException # type: ignore
+from fastapi import APIRouter, HTTPException
 from collections import defaultdict
-from pydantic import BaseModel  # type: ignore
-from sqlalchemy.orm import Session  # type: ignore
-from sqlalchemy.exc import OperationalError  # type: ignore
-from database import SessionLocal  # type: ignore
-from models import BookORM  # type: ignore
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+from database import SessionLocal
+from models import BookORM
 
 router = APIRouter(
     prefix="/api/v1/categories",
     tags=["categories"]
 )
-
 
 class BookWithCategory(BaseModel):
     id: int
@@ -18,7 +17,6 @@ class BookWithCategory(BaseModel):
     price: float
     rating: int
     category: str
-
 
 @router.get(
     "/stats",
@@ -55,7 +53,6 @@ def stats_by_category():
         cat = book.category
         category_stats[cat]["quantidade"] += 1
         category_stats[cat]["preço total"] += book.price
-    # Calcular média de preço por categoria
     for cat in category_stats:
         count = category_stats[cat]["quantidade"]
         total = category_stats[cat]["preço total"]
