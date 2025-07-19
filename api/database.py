@@ -1,4 +1,4 @@
-from api.models import Book
+from models import Book
 
 books_db = [
     Book(

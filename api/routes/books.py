@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from api.models import Book
-from api.database import books_db
+from models import Book
+from database import books_db
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
