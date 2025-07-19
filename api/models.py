@@ -10,7 +10,7 @@ class BookORM(Base):
     rating = Column(Integer)
     stock = Column(Integer)
     category = Column(String)
-    cover = Optional[str] = Column(String)
+    cover = Column(String)
     
 from pydantic import BaseModel
 from typing import Optional
