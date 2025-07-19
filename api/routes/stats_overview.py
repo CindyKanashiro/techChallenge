@@ -1,17 +1,16 @@
-from fastapi import FastAPI  # type: ignore
+from fastapi import APIRouter, HTTPException # type: ignore
 from typing import Dict
 from pydantic import BaseModel  # type: ignore
 from collections import Counter
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from sqlalchemy.exc import OperationalError  # type: ignore
 from database import SessionLocal, Base
 
-app = FastAPI(
-    title="Book Overview Stats API",
-    description="API para estatísticas gerais dos livros.",
-    version="1.0.0"
+router = APIRouter(
+    prefix="/api/v1/stats",
+    tags=["overview"]
 )
-
 
 class BookORM(Base):
     __tablename__ = "books"
@@ -21,16 +20,14 @@ class BookORM(Base):
     rating = Column(Integer)
     category = Column(String)
 
-
 class Book(BaseModel):
     id: int
     title: str
     price: float
-    rating: int 
+    rating: int
 
-
-@app.get(
-    "/api/v1/stats/overview",
+@router.get(
+    "/overview",
     summary="Estatísticas gerais dos livros",
     description="Retorna estatísticas gerais dos livros, incluindo total de livros, média de preço e distribuição de ratings.",
     response_description="Estatísticas gerais dos livros"
@@ -44,8 +41,21 @@ def stats_overview() -> Dict:
     - **Distribuição de Ratings**: quantidade de livros por nota de avaliação
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).all()
+    try:
+        books = db.query(BookORM).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
     total_books = len(books)
+    if total_books == 0:
+        db.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro cadastrado no banco de dados."
+        )
     avg_price = (
         sum(book.price for book in books) / total_books if total_books > 0 else 0
     )

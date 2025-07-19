@@ -1,24 +1,15 @@
-from fastapi import FastAPI  # type: ignore
+from fastapi import APIRouter, HTTPException # type: ignore
 from collections import defaultdict
 from pydantic import BaseModel  # type: ignore
-from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
-from database import SessionLocal, Base
+from sqlalchemy.exc import OperationalError  # type: ignore
+from database import SessionLocal  # type: ignore
+from models import BookORM  # type: ignore
 
-app = FastAPI(
-    title="Book Categories Stats API",
-    description="API para estatísticas de livros por categoria.",
-    version="1.0.0",
+router = APIRouter(
+    prefix="/api/v1/categories",
+    tags=["categories"]
 )
-
-
-class BookORM(Base):
-    __tablename__ = "books"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    price = Column(Float)
-    rating = Column(Integer)
-    category = Column(String)
 
 
 class BookWithCategory(BaseModel):
@@ -29,11 +20,10 @@ class BookWithCategory(BaseModel):
     category: str
 
 
-@app.get(
-    "/api/v1/stats/categories",
+@router.get(
+    "/stats",
     summary="Estatísticas por categoria",
-    description="Retorna estatísticas agregadas de livros por categoria, incluindo quantidade, preço total e média de preço.",
-    response_description="Estatísticas por categoria",
+    description="Retorna estatísticas agregadas de livros por categoria.",
 )
 def stats_by_category():
     """
@@ -44,7 +34,20 @@ def stats_by_category():
     - **média de preço**: média dos preços dos livros na categoria
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).all()
+    try:
+        books = db.query(BookORM).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
+    if not books:
+        db.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro cadastrado no banco de dados."
+        )
     category_stats = defaultdict(
         lambda: {"quantidade": 0, "preço total": 0.0, "média de preço": 0.0}
     )

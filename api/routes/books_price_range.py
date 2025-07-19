@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Query  # type: ignore
+from fastapi import APIRouter, Query, HTTPException  # type: ignore
 from pydantic import BaseModel  # type: ignore
 from typing import List
 from sqlalchemy import Column, Integer, String, Float  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from sqlalchemy.exc import OperationalError  # type: ignore
 from database import SessionLocal, Base
 
-app = FastAPI(
-    title="Book Price Range API",
-    description="API para buscar livros por faixa de preço.",
-    version="1.0.0"
+router = APIRouter(
+    prefix="/api/v1/books",
+    tags=["price-range"]
 )
 
 
@@ -29,8 +29,8 @@ class Book(BaseModel):
     category: str
 
 
-@app.get(
-    "/api/v1/books/price-range",
+@router.get(
+    "/price-range",
     response_model=List[Book],
     summary="Buscar livros por faixa de preço",
     description="Retorna uma lista de livros com preço entre os valores mínimo e máximo informados.",
@@ -48,7 +48,20 @@ def get_books_by_price_range(
     - Retorna: lista de livros com preço entre min e max
     """
     db: Session = SessionLocal()
-    books = db.query(BookORM).filter(BookORM.price >= min, BookORM.price <= max).all()
+    try:
+        books = db.query(BookORM).filter(BookORM.price >= min, BookORM.price <= max).all()
+    except OperationalError:
+        db.close()
+        raise HTTPException(
+            status_code=500,
+            detail="Tabela de livros não existe no banco de dados."
+        )
+    db.close()
+    if not books:
+        raise HTTPException(
+            status_code=404,
+            detail="Nenhum livro encontrado na faixa de preço informada."
+        )
     result = [
         Book(
             id=book.id,
@@ -59,5 +72,4 @@ def get_books_by_price_range(
         )
         for book in books
     ]
-    db.close()
     return result
