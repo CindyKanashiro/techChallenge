@@ -10,8 +10,7 @@ class RequestLogHandler(SQLiteHandler):
         ts          REAL,
         client_addr TEXT,
         method      TEXT,
-        status_code INTEGER,
-        duration_ms REAL
+        status_code INTEGER
     );
     CREATE INDEX IF NOT EXISTS idx_requests_ts ON requests(ts);
     """
@@ -25,8 +24,24 @@ class RequestLogHandler(SQLiteHandler):
                 "client_addr",
                 "method",
                 "status_code",
-                "duration_ms",
             ],
             ddl=self._DDL,
             level=level,
         )
+
+    def row_from_record(self, record: logging.LogRecord) -> list:
+        """Convert a logging record to a row for insertion into the database.
+
+        Args:
+            record (logging.LogRecord): a logging record.
+
+        Returns:
+            list: the row data corresponding to the record.
+        """
+        client_addr, method, _path, _http_ver, status_code = record.args
+        return [
+            record.created,
+            client_addr,
+            method,
+            int(status_code),
+        ]

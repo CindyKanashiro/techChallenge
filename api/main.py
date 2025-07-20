@@ -1,5 +1,6 @@
+from api.logger.setup import setup_logging
 from fastapi import FastAPI
-import uvicorn
+
 from api.routes import (
     books_price_range,
     books_top_rated,
@@ -9,6 +10,7 @@ from api.routes import (
 from api.routes import auth, scraping
 from api.routes.books import router as books_router
 
+setup_logging("log.db")
 
 app = FastAPI(title="Books API", version="1.0")
 

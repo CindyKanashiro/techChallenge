@@ -19,6 +19,8 @@ class SQLiteHandler(logging.Handler):
         self.table = table
         self.columns = list(columns)
         self._ddl = ddl
+        self._generate_insert_sql()
+        self._ensure_schema()
 
     def _generate_insert_sql(self) -> str:
         placeholders = ",".join(["?"] * len(self.columns))
@@ -36,7 +38,7 @@ class SQLiteHandler(logging.Handler):
         This improves performance and concurrency.
         """
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA journal_mode=WAL;")
             conn.executescript(self._ddl)
             conn.commit()
 

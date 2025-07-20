@@ -12,8 +12,9 @@ class AppLogHandler(SQLiteHandler):
         logger   TEXT,
         message  TEXT,
         filename TEXT,
-        lineno   INTEGER,
+        lineno   INTEGER
     );
+    CREATE INDEX IF NOT EXISTS idx_app_logs_ts ON app_logs(ts);
     """
 
     def __init__(self, db_path: str = "log.db", level: int = logging.INFO):
