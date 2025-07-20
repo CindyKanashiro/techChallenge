@@ -4,13 +4,11 @@ from pydantic import BaseModel
 from collections import Counter
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
-from database import SessionLocal
-from models import BookORM  
+from api.database import SessionLocal
+from api.models import BookORM
 
-router = APIRouter(
-    prefix="/api/v1/stats",
-    tags=["overview"]
-)
+router = APIRouter(prefix="/api/v1/stats", tags=["overview"])
+
 
 class Book(BaseModel):
     id: int
@@ -18,11 +16,12 @@ class Book(BaseModel):
     price: float
     rating: int
 
+
 @router.get(
     "/overview",
     summary="Estatísticas gerais dos livros",
     description="Retorna estatísticas gerais dos livros, incluindo total de livros, média de preço e distribuição de ratings.",
-    response_description="Estatísticas gerais dos livros"
+    response_description="Estatísticas gerais dos livros",
 )
 def stats_overview() -> Dict:
     """
@@ -38,15 +37,13 @@ def stats_overview() -> Dict:
     except OperationalError:
         db.close()
         raise HTTPException(
-            status_code=500,
-            detail="Tabela de livros não existe no banco de dados."
+            status_code=500, detail="Tabela de livros não existe no banco de dados."
         )
     total_books = len(books)
     if total_books == 0:
         db.close()
         raise HTTPException(
-            status_code=404,
-            detail="Nenhum livro cadastrado no banco de dados."
+            status_code=404, detail="Nenhum livro cadastrado no banco de dados."
         )
     avg_price = (
         sum(book.price for book in books) / total_books if total_books > 0 else 0
@@ -57,5 +54,5 @@ def stats_overview() -> Dict:
     return {
         "Total de Livros": total_books,
         "Média de Preço": avg_price,
-        "Distribuição de Ratings": rating_distribution
+        "Distribuição de Ratings": rating_distribution,
     }

@@ -1,15 +1,12 @@
-from fastapi import APIRouter, Query, HTTPException 
-from pydantic import BaseModel  
+from fastapi import APIRouter, Query, HTTPException
+from pydantic import BaseModel
 from typing import List
-from sqlalchemy.orm import Session  
-from sqlalchemy.exc import OperationalError  
-from database import SessionLocal  
-from models import BookORM  
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+from api.database import SessionLocal
+from api.models import BookORM
 
-router = APIRouter(
-    prefix="/api/v1/books",
-    tags=["price-range"]
-)
+router = APIRouter(prefix="/api/v1/books", tags=["price-range"])
 
 
 class Book(BaseModel):
@@ -25,11 +22,11 @@ class Book(BaseModel):
     response_model=List[Book],
     summary="Buscar livros por faixa de preço",
     description="Retorna uma lista de livros com preço entre os valores mínimo e máximo informados.",
-    response_description="Lista de livros dentro da faixa de preço"
+    response_description="Lista de livros dentro da faixa de preço",
 )
 def get_books_by_price_range(
     min: float = Query(..., description="Preço mínimo", gt=0),
-    max: float = Query(..., description="Preço máximo", gt=0)
+    max: float = Query(..., description="Preço máximo", gt=0),
 ):
     """
     Busca livros por faixa de preço.
@@ -40,18 +37,19 @@ def get_books_by_price_range(
     """
     db: Session = SessionLocal()
     try:
-        books = db.query(BookORM).filter(BookORM.price >= min, BookORM.price <= max).all()
+        books = (
+            db.query(BookORM).filter(BookORM.price >= min, BookORM.price <= max).all()
+        )
     except OperationalError:
         db.close()
         raise HTTPException(
-            status_code=500,
-            detail="Tabela de livros não existe no banco de dados."
+            status_code=500, detail="Tabela de livros não existe no banco de dados."
         )
     db.close()
     if not books:
         raise HTTPException(
             status_code=404,
-            detail="Nenhum livro encontrado na faixa de preço informada."
+            detail="Nenhum livro encontrado na faixa de preço informada.",
         )
     result = [
         Book(

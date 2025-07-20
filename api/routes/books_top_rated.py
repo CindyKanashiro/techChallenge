@@ -1,15 +1,13 @@
-from fastapi import APIRouter, HTTPException  
-from pydantic import BaseModel  
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from typing import List
-from sqlalchemy.orm import Session  
-from sqlalchemy.exc import OperationalError  
-from database import SessionLocal  
-from models import BookORM  
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+from api.database import SessionLocal
+from api.models import BookORM
 
-router = APIRouter(  
-    prefix="/api/v1/books",
-    tags=["top-rated"]
-)
+router = APIRouter(prefix="/api/v1/books", tags=["top-rated"])
+
 
 class Book(BaseModel):
     id: int
@@ -18,12 +16,13 @@ class Book(BaseModel):
     rating: int
     category: str
 
+
 @router.get(
     "/top-rated",
     response_model=List[Book],
     summary="Buscar livros com maior avaliação",
     description="Retorna uma lista dos 10 livros com a maior nota de avaliação.",
-    response_description="Lista dos 10 livros com maior avaliação"
+    response_description="Lista dos 10 livros com maior avaliação",
 )
 def get_top_rated_books():
     """
@@ -33,18 +32,21 @@ def get_top_rated_books():
     """
     db: Session = SessionLocal()
     try:
-        books = db.query(BookORM).order_by(BookORM.rating.desc(), BookORM.id.asc()).limit(10).all()
+        books = (
+            db.query(BookORM)
+            .order_by(BookORM.rating.desc(), BookORM.id.asc())
+            .limit(10)
+            .all()
+        )
     except OperationalError:
         db.close()
         raise HTTPException(
-            status_code=500,
-            detail="Tabela de livros não existe no banco de dados."
+            status_code=500, detail="Tabela de livros não existe no banco de dados."
         )
     if not books:
         db.close()
         raise HTTPException(
-            status_code=404,
-            detail="Nenhum livro encontrado para avaliação."
+            status_code=404, detail="Nenhum livro encontrado para avaliação."
         )
     result = [
         Book(

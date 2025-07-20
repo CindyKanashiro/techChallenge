@@ -3,13 +3,11 @@ from collections import defaultdict
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
-from database import SessionLocal
-from models import BookORM
+from api.database import SessionLocal
+from api.models import BookORM
 
-router = APIRouter(
-    prefix="/api/v1/categories",
-    tags=["categories"]
-)
+router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
+
 
 class BookWithCategory(BaseModel):
     id: int
@@ -17,6 +15,7 @@ class BookWithCategory(BaseModel):
     price: float
     rating: int
     category: str
+
 
 @router.get(
     "/stats",
@@ -37,14 +36,12 @@ def stats_by_category():
     except OperationalError:
         db.close()
         raise HTTPException(
-            status_code=500,
-            detail="Tabela de livros não existe no banco de dados."
+            status_code=500, detail="Tabela de livros não existe no banco de dados."
         )
     if not books:
         db.close()
         raise HTTPException(
-            status_code=404,
-            detail="Nenhum livro cadastrado no banco de dados."
+            status_code=404, detail="Nenhum livro cadastrado no banco de dados."
         )
     category_stats = defaultdict(
         lambda: {"quantidade": 0, "preço total": 0.0, "média de preço": 0.0}
