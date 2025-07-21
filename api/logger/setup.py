@@ -30,4 +30,16 @@ def setup_logging(db_path: str = "log.db") -> None:
     console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(formatter)
 
-    root_logger.addHandler(console_handler)
+    # root_logger.addHandler(console_handler)
+
+    for child_logger in [
+        "uvicorn",
+        "uvicorn.error",
+        "uvicorn.access",
+        "fastapi",
+        "starlette",
+        "httpx",
+        "sqlalchemy",
+        "sqlalchemy.engine",
+    ]:
+        logging.getLogger(child_logger).propagate = True  # propaga logs pro root

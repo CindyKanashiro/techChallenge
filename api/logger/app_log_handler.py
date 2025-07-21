@@ -10,9 +10,9 @@ class AppLogHandler(SQLiteHandler):
         ts       REAL,
         level    TEXT,
         logger   TEXT,
-        message  TEXT,
         filename TEXT,
-        lineno   INTEGER
+        lineno   INTEGER,
+        message  TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_app_logs_ts ON app_logs(ts);
     """
@@ -32,3 +32,21 @@ class AppLogHandler(SQLiteHandler):
             ddl=self._DDL,
             level=level,
         )
+
+    def row_from_record(self, record: logging.LogRecord) -> list:
+        """Convert a logging record to a row for insertion into the database.
+
+        Args:
+            record (logging.LogRecord): a logging record.
+
+        Returns:
+            list: the row data corresponding to the record.
+        """
+        return [
+            record.created,
+            record.levelname,
+            record.name,
+            record.pathname,
+            record.lineno,
+            record.getMessage(),
+        ]
