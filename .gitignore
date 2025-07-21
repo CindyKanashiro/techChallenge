@@ -1,5 +1,6 @@
 # Ambiente virtual
 venv/
+venv-dev/
 
 # Cache Python
 __pycache__/
@@ -26,3 +27,7 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .dmypy.json
+
+
+# Notebooks para desenvolvimento
+notebooks/
