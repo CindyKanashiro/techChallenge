@@ -10,7 +10,8 @@ class RequestLogHandler(SQLiteHandler):
         ts          REAL,
         client_addr TEXT,
         method      TEXT,
-        status_code INTEGER
+        status_code INTEGER,
+        path    TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_requests_ts ON requests(ts);
     """
@@ -19,12 +20,7 @@ class RequestLogHandler(SQLiteHandler):
         super().__init__(
             db_path=db_path,
             table="requests",
-            columns=[
-                "ts",
-                "client_addr",
-                "method",
-                "status_code",
-            ],
+            columns=["ts", "client_addr", "method", "status_code", "path"],
             ddl=self._DDL,
             level=level,
         )
@@ -38,10 +34,5 @@ class RequestLogHandler(SQLiteHandler):
         Returns:
             list: the row data corresponding to the record.
         """
-        client_addr, method, _path, _http_ver, status_code = record.args
-        return [
-            record.created,
-            client_addr,
-            method,
-            int(status_code),
-        ]
+        client_addr, method, request_path, _http_ver, status_code = record.args
+        return [record.created, client_addr, method, int(status_code), request_path]
