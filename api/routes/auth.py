@@ -1,11 +1,12 @@
 from typing import Annotated
+
+from api.auth.auth_handler import (check_user_is_admin, refresh_token_jwt,
+                                   sign_jwt)
+from api.auth.model import Token
+from api.settings import ADMIN_EMAIL
+from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from api.settings import ADMIN_EMAIL
-from api.auth.auth_handler import check_user_is_admin, sign_jwt, refresh_token_jwt
-from api.auth.model import Token
-
-from dotenv import load_dotenv
 
 load_dotenv(".env")
 

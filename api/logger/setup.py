@@ -1,6 +1,7 @@
 import logging
-from api.logger.request_log_handler import RequestLogHandler
+
 from api.logger.app_log_handler import AppLogHandler
+from api.logger.request_log_handler import RequestLogHandler
 
 
 def setup_logging(db_path: str = "log.db") -> None:

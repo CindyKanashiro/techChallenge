@@ -1,7 +1,7 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
-from api.auth.auth_handler import check_user_is_authenticate
 
+from api.auth.auth_handler import check_user_is_authenticate
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter()
 

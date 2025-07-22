@@ -1,10 +1,11 @@
-from typing import Literal
-import pandas as pd
-import requests
-from urllib.parse import urljoin
-from scraping.utils import fetch_soup
 import re
 import sqlite3
+from typing import Literal
+from urllib.parse import urljoin
+
+import pandas as pd
+import requests
+from scraping.utils import fetch_soup
 
 
 def download_catalogue_data():

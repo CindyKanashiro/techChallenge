@@ -1,9 +1,7 @@
-from fastapi import APIRouter
 import joblib
-from sklearn.feature_extraction.text import TfidfVectorizer
-
+from fastapi import APIRouter
 from models import DataToPrediction
-
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 router = APIRouter()
 

@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException
-from typing import Dict
-from pydantic import BaseModel
 from collections import Counter
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import OperationalError
+from typing import Dict
+
 from api.database import SessionLocal
 from api.models import BookORM
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/v1/stats", tags=["overview"])
 

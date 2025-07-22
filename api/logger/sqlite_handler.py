@@ -1,5 +1,5 @@
-import sqlite3
 import logging
+import sqlite3
 from typing import Any, List, Sequence
 
 

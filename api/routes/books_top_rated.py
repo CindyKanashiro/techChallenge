@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from typing import List
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import OperationalError
+
 from api.database import SessionLocal
 from api.models import BookORM
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/v1/books", tags=["top-rated"])
 

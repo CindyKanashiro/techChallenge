@@ -1,5 +1,6 @@
-from api.logger.sqlite_handler import SQLiteHandler
 import logging
+
+from api.logger.sqlite_handler import SQLiteHandler
 
 
 class RequestLogHandler(SQLiteHandler):

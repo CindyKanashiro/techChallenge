@@ -1,14 +1,8 @@
 from api.logger.setup import setup_logging
-from fastapi import FastAPI
-
-from api.routes import (
-    books_price_range,
-    books_top_rated,
-    stats_categories,
-    stats_overview,
-)
-from api.routes import auth, scraping
+from api.routes import (auth, books_price_range, books_top_rated, scraping,
+                        stats_categories, stats_overview)
 from api.routes.books import router as books_router
+from fastapi import FastAPI
 
 setup_logging("log.db")
 

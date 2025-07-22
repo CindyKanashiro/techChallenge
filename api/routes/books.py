@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-from api.models import Book
-import sqlite3
-import pandas as pd
-from typing import List, Optional
 import base64
-
-import sys
 import os
+import sqlite3
+import sys
+from typing import List, Optional
+
+import pandas as pd
+from api.models import Book
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from scraping.books import download_catalogue_data

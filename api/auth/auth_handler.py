@@ -1,18 +1,13 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any, Dict
+
+import jwt
+from api.settings import (ACCESS_TOKEN_EXPIRE_MINUTES, ADMIN_EMAIL,
+                          ADMIN_PASSWORD, ALGORITHM, REFRESH_TOKEN_EXPIRE_DAYS,
+                          SECRET_KEY)
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-import jwt
-
-from api.settings import (
-    ALGORITHM,
-    REFRESH_TOKEN_EXPIRE_DAYS,
-    SECRET_KEY,
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    ADMIN_PASSWORD,
-    ADMIN_EMAIL,
-)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
