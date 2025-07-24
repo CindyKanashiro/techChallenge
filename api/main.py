@@ -14,6 +14,7 @@ routers = [
     routes.health_router,
     routes.auth_router,
     routes.scraping_router,
+    routes.logs_router,
 ]
 
 for router in routers:
