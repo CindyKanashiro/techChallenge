@@ -31,3 +31,6 @@ __pycache__/
 
 # Notebooks para desenvolvimento
 notebooks/
+
+# Dados usados pela API
+data/
