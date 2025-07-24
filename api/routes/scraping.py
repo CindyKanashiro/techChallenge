@@ -1,12 +1,10 @@
-from typing import Annotated
+from fastapi import APIRouter, Depends
 
-from fastapi import APIRouter, Depends, HTTPException, status
-
-from api.auth.auth_handler import check_user_is_authenticate
+from api.core.auth import require_admin
 
 router = APIRouter()
 
 
 @router.post("/trigger")
-def start_scrapping(token: Annotated[str, Depends(check_user_is_authenticate)]):
+def start_scrapping(_: str = Depends(require_admin)):
     return {"Status": "Searching..."}
