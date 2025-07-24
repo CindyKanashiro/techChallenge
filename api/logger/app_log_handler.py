@@ -18,7 +18,7 @@ class AppLogHandler(SQLiteHandler):
     CREATE INDEX IF NOT EXISTS idx_app_logs_ts ON app_logs(ts);
     """
 
-    def __init__(self, db_path: str = "log.db", level: int = logging.INFO):
+    def __init__(self, db_path: str = "logs.db", level: int = logging.INFO):
         super().__init__(
             db_path=db_path,
             table="app_logs",

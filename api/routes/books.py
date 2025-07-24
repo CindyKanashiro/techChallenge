@@ -1,138 +1,96 @@
-import base64
-import os
-import sqlite3
-import sys
-from typing import List, Optional
+from typing import Optional
 
-import pandas as pd
-from api.models import Book
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, HTTPException
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from scraping.books import download_catalogue_data
+from api.core.database import get_books_session
+from api.models.books import BookModel
+from api.schemas.books import BookSchema
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
-DB_PATH = "books.db"
 
+@router.get(
+    "",
+    response_model=list[BookSchema],
+    summary="Listar livros",
+    description="Retorna uma lista de livros com opções de filtragem.",
+)
+def list_books(
+    skip: Optional[int] = None,
+    limit: Optional[int] = None,
+    title: Optional[str] = None,
+    category: Optional[str] = None,
+) -> list[BookSchema]:
+    db = get_books_session()
 
-def get_db_connection():
-    """Cria conexão com o banco SQLite"""
-    return sqlite3.connect(DB_PATH)
-
-
-def get_books_from_db(
-    limit: Optional[int] = None, category: Optional[str] = None
-) -> List[dict]:
-    """Busca livros do banco de dados"""
-    query = "SELECT * FROM books"
-    params = []
-
-    if category:
-        query += " WHERE category = ?"
-        params.append(category)
-
-    if limit:
-        query += f" LIMIT {limit}"
-
-    with get_db_connection() as conn:
-        df = pd.read_sql_query(query, conn, params=params)
-        return df.to_dict("records")
-
-
-def book_exists_in_db(book_id: int) -> bool:
-    """Verifica se um livro existe no banco"""
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM books WHERE rowid = ?", (book_id,))
-        return cursor.fetchone()[0] > 0
-
-
-@router.get("/", response_model=List[Book])
-def list_books(limit: Optional[int] = None, category: Optional[str] = None):
-    """Lista todos os livros ou filtra por categoria"""
     try:
-        books_data = get_books_from_db(limit=limit, category=category)
-
-        books = []
-        for i, book_data in enumerate(books_data, 1):
-            # Converte bytes da imagem para base64 se necessário
-            cover_data = book_data.get("cover")
-            if isinstance(cover_data, bytes):
-                cover_b64 = base64.b64encode(cover_data).decode("utf-8")
-            else:
-                cover_b64 = cover_data
-
-            book = Book(
-                id=i,  # ou rowid se quiser
-                title=book_data["title"],
-                price=book_data["price"],
-                rating=book_data["rating"],
-                stock=book_data["stock"],
-                category=book_data.get("category", ""),
-                cover=cover_b64,
-            )
-            books.append(book)
-
-        return books
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao buscar livros: {str(e)}")
+        query = db.query(BookModel)
+        if title:
+            query = query.filter(BookModel.title == title)
+        if category:
+            query = query.filter(BookModel.category == category)
+        if skip:
+            query = query.offset(skip)
+        if limit:
+            query = query.limit(limit)
+        return list(map(BookSchema.model_validate, query.all()))
+    finally:
+        db.close()
 
 
-@router.get("/{book_id}", response_model=Book)
-def get_book(book_id: int):
-    """Busca um livro específico pelo ID"""
+@router.get(
+    "/top-rated",
+    response_model=list[BookSchema],
+    summary="Listar livros mais bem avaliados",
+    description="Retorna uma lista de livros ordenados por avaliação.",
+)
+def list_top_rated_books(
+    skip: Optional[int] = None, limit: Optional[int] = 10
+) -> list[BookSchema]:
+    db = get_books_session()
+
     try:
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM books WHERE rowid = ?", (book_id,))
-            book_data = cursor.fetchone()
-
-            if not book_data:
-                raise HTTPException(status_code=404, detail="Book not found")
-
-            # Pega os nomes das colunas
-            columns = [description[0] for description in cursor.description]
-            book_dict = dict(zip(columns, book_data))
-
-            # Converte bytes da imagem para base64 se necessário
-            cover_data = book_dict.get("cover")
-            if isinstance(cover_data, bytes):
-                cover_b64 = base64.b64encode(cover_data).decode("utf-8")
-            else:
-                cover_b64 = cover_data
-
-            book = Book(
-                id=book_id,
-                title=book_dict["title"],
-                price=book_dict["price"],
-                rating=book_dict["rating"],
-                stock=book_dict["stock"],
-                category=book_dict.get("category", ""),
-                cover=cover_b64,
-            )
-
-            return book
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao buscar livro: {str(e)}")
+        query = db.query(BookModel).order_by(BookModel.rating.desc())
+        if skip:
+            query = query.offset(skip)
+        if limit:
+            query = query.limit(limit)
+        return list(map(BookSchema.model_validate, query.all()))
+    finally:
+        db.close()
 
 
-@router.get("/categories/", response_model=List[str])
-def list_categories():
-    """Lista todas as categorias disponíveis"""
+@router.get(
+    "/price-range",
+    response_model=list[BookSchema],
+    summary="Listar livros por faixa de preço",
+    description="Retorna uma lista de livros filtrados por faixa de preço.",
+)
+def get_books_by_price_range(min: float, max: float) -> list[BookSchema]:
+    db = get_books_session()
+
     try:
-        with get_db_connection() as conn:
-            df = pd.read_sql_query(
-                "SELECT DISTINCT category FROM books WHERE category IS NOT NULL", conn
-            )
-            categories = sorted(df["category"].tolist())
-            return categories
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Erro ao buscar categorias: {str(e)}"
+        query = db.query(BookModel).filter(
+            BookModel.price >= min, BookModel.price <= max
         )
+        return list(map(BookSchema.model_validate, query.all()))
+    finally:
+        db.close()
+
+
+@router.get(
+    "/{book_id}",
+    response_model=BookSchema,
+    summary="Obter livro por ID",
+    description="Retorna os detalhes de um livro específico pelo ID.",
+)
+def get_book(book_id: int) -> BookSchema:
+    db = get_books_session()
+
+    try:
+        book = db.query(BookModel).filter(BookModel.id == book_id).first()
+        if not book:
+            raise HTTPException(status_code=404, detail="Book not found")
+        return BookSchema.model_validate(book)
+    finally:
+        db.close()

@@ -17,7 +17,7 @@ class RequestLogHandler(SQLiteHandler):
     CREATE INDEX IF NOT EXISTS idx_requests_ts ON requests(ts);
     """
 
-    def __init__(self, db_path: str = "log.db", level: int = logging.INFO):
+    def __init__(self, db_path: str = "logs.db", level: int = logging.INFO):
         super().__init__(
             db_path=db_path,
             table="requests",

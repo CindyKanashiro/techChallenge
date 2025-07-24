@@ -5,7 +5,8 @@ from urllib.parse import urljoin
 
 import pandas as pd
 import requests
-from scraping.utils import fetch_soup
+
+from scraping.core import fetch_soup
 
 
 def download_catalogue_data():
@@ -142,4 +143,12 @@ def save_catalogue_data_as_sqlite_table(
             conn,
             if_exists=if_exists,
             index=False,
+            dtype={
+                "title": "TEXT",
+                "price": "REAL",
+                "rating": "INTEGER",
+                "stock": "INTEGER",
+                "category": "TEXT",
+                "cover": "BLOB",
+            },
         )
