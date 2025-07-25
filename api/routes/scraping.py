@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from scraping import download_catalogue_data
+
 from api.core.auth import require_admin
+from scraping import download_catalogue_data
 
 router = APIRouter(prefix="/scraping", tags=["Scraping"])
 

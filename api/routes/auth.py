@@ -1,6 +1,7 @@
-from api.core.auth import create_access_token, refresh_access_token, authenticate_admin
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
+from api.core.auth import authenticate_admin, create_access_token, refresh_access_token
 from api.schemas.auth import TokenSchema
 
 router = APIRouter(prefix="/auth", tags=["Auth"])

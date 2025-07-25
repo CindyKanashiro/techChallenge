@@ -1,13 +1,15 @@
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timedelta, timezone
+
 import jwt
+from fastapi import HTTPException
+
 from api.core.settings import (
-    SECRET_KEY,
-    ALGORITHM,
-    ADMIN_EMAIL,
     ACCESS_TOKEN_EXPIRE_TIME,
     ACCESS_TOKEN_REFRESH_TIME,
+    ADMIN_EMAIL,
+    ALGORITHM,
+    SECRET_KEY,
 )
-from fastapi import HTTPException
 
 
 def create_access_token() -> str:

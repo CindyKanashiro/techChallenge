@@ -1,9 +1,11 @@
+from typing import Annotated
+
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from typing import Annotated
-from fastapi import Depends, HTTPException
-from api.core.settings import ADMIN_EMAIL, ADMIN_PASSWORD
+
 from api.core.auth.token import decode_token
+from api.core.settings import ADMIN_EMAIL, ADMIN_PASSWORD
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
