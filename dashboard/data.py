@@ -1,5 +1,5 @@
-import requests
 import pandas as pd
+import requests
 
 API_URL = "http://localhost:8000"
 

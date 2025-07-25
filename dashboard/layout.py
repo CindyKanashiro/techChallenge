@@ -1,14 +1,16 @@
-from dashboard.data import fetch_request_stats, get_request_logs_data, get_app_logs_data
+from datetime import datetime, timedelta
+
+import pandas as pd
+import streamlit as st
+from requests import RequestException
+
 from dashboard.charts import (
-    render_request_metrics_panel,
-    render_request_timeline_chart,
     render_application_logs,
     render_failed_requests_information,
+    render_request_metrics_panel,
+    render_request_timeline_chart,
 )
-from requests import RequestException
-import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
+from dashboard.data import fetch_request_stats, get_app_logs_data, get_request_logs_data
 
 
 def render_main_page():
