@@ -5,6 +5,7 @@ from .health import router as health_router
 from .logs import router as logs_router
 from .scraping import router as scraping_router
 from .stats import router as stats_router
+from .ml import router as ml_router
 
 __all__ = [
     "books_router",
@@ -14,4 +15,5 @@ __all__ = [
     "auth_router",
     "scraping_router",
     "logs_router",
+    "ml_router",
 ]

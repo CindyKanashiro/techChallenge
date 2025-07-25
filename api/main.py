@@ -15,6 +15,7 @@ routers = [
     routes.auth_router,
     routes.scraping_router,
     routes.logs_router,
+    routes.ml_router,
 ]
 
 for router in routers:
