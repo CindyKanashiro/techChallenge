@@ -35,8 +35,9 @@ def fetch_catalogue_data() -> pd.DataFrame:
 
     book_urls = fetch_book_urls(catalogue_url)
 
-    for book_url in book_urls:
-        book_details = fetch_book_details(book_url)
+    for i, book_url in enumerate(book_urls):
+        print(f'{i}/{len(book_urls)}')
+        book_details = fetch_book_details(book_url, i)
         df = pd.concat([df, pd.DataFrame([book_details])], ignore_index=True)
     return df
 
@@ -73,7 +74,7 @@ def fetch_book_urls(catalogue_url: str) -> list[str]:
     return book_urls
 
 
-def fetch_book_details(book_url: str) -> dict:
+def fetch_book_details(book_url: str, id: int) -> dict:
     """Fetch the details of a book from its page.
 
     Args:
@@ -113,6 +114,7 @@ def fetch_book_details(book_url: str) -> dict:
     cover = requests.get(cover_url).content  # array de bytes
 
     return {
+        "id": id,
         "title": title,
         "price": price,
         "rating": rating,
@@ -124,7 +126,7 @@ def fetch_book_details(book_url: str) -> dict:
 
 def save_catalogue_data_as_sqlite_table(
     df: pd.DataFrame,
-    db_path: str = "books.db",
+    db_path: str = "data/books.db",
     if_exists: Literal["fail", "replace", "append"] = "replace",
 ) -> None:
     """Save the DataFrame containing book details as a table in a SQLite database.
