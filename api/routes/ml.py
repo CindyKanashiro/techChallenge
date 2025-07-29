@@ -3,7 +3,7 @@ from api.core.database import get_books_session
 from api.models.books import BookModel
 from api.schemas.books import BookSchema
 
-router = APIRouter(prefix="/api/v1/ml", tags="Machine-Learning")
+router = APIRouter(prefix="/api/v1/ml", tags=["Machine-Learning"])
 
 
 @router.get(
