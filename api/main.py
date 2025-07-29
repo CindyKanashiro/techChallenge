@@ -1,8 +1,10 @@
+from pathlib import Path
 from fastapi import FastAPI
 
 import api.routes as routes
 from api.logger.setup import setup_logging
 
+Path('data').mkdir(exist_ok=True)
 setup_logging("data/logs.db")
 
 app = FastAPI(title="Books API", version="1.0")
