@@ -154,3 +154,6 @@ def save_catalogue_data_as_sqlite_table(
                 "cover": "BLOB",
             },
         )
+
+if __name__ == "__main__":
+    download_catalogue_data()
