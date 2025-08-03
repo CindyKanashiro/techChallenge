@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: streamlit
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements-dashboard.txt
+    startCommand: streamlit run run_dashboard.py --server.port=$STREAMLIT_PORT --server.enableCORS=false
+    envVars:
+      - key: STREAMLIT_PORT
+        value: 3000
+
+  - type: web
+    runtime: python
+    name: api
+    repo: https://github.com/CindyKanashiro/techChallenge.git
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host=0.0.0.0 --port=$PORT
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        value: e0de97909dc3f5978daa1a72565a57cee3e112bdd037860f7cb3ebfdbba7179a
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_TIME
+        value: 30
+      - key: ACCESS_TOKEN_REFRESH_TIME
+        value: 4320
+      - key: EMAIL_ADMIN
+        value: admin@admin.com
+      - key: HASHED_ADMIN_PASSWORD
+        value: $2b$12$J6EX1rEZ803d5H0WnY142.YPlX7bKFfh/H0f3GnhsfKGWY4cpZBfK
+      - key: PORT
+        value: 8000
