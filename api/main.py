@@ -9,6 +9,10 @@ setup_logging("data/logs.db")
 
 app = FastAPI(title="Books API", version="1.0")
 
+@app.get('/')
+def main():
+    return {"message": "Hello World"}
+
 routers = [
     routes.books_router,
     routes.categories_router,
