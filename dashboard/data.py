@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
+from os import getenv
 
-API_URL = "http://localhost:8000"
+API_URL = getenv('API_URL_FOR_STREAMLIT', "http://localhost:8000")
 
 
 def get_request_logs_data(min_ts: float | None) -> pd.DataFrame:

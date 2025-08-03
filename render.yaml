@@ -8,6 +8,8 @@ services:
     envVars:
       - key: STREAMLIT_PORT
         value: 3000
+      - key: API_URL_FOR_STREAMLIT
+        value: https://api-6wo1.onrender.com
 
   - type: web
     runtime: python
