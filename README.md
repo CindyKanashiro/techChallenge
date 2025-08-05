@@ -127,15 +127,9 @@ python scraping/books.py
 
 ## 🕷️ Web Scraping
 
-### 🚀 Execução do Script
+### 🚀 Execução
 
-```bash
-# Scraping completo (todas as páginas)
-python -m scraping.books
-
-# Com parâmetros específicos
-python scraping/books.py --pages 10 --delay 1
-```
+O pacote scraping contém todas as funções relativas ao web scraper. A função `download_catalogue_data`, que pode ser acionada pelo endpoint `/scraping/trigger` da API, extrai os dados dos livros disponíveis em books.toscrape.com e os salva com uma tabela de um banco de dados SQLite.
 
 ### 📊 Dados Extraídos
 
@@ -143,24 +137,13 @@ O script coleta os seguintes campos de cada livro:
 
 | Campo | Descrição | Exemplo |
 |-------|-----------|---------|
-| **Título** | Nome completo do livro | "A Light in the Attic" |
-| **Preço** | Valor em libras (£) | 51.77 |
-| **Rating** | Avaliação de 1 a 5 estrelas | 3 |
-| **Disponibilidade** | Status de estoque | "In stock (22 available)" |
-| **Categoria** | Gênero/categoria do livro | "Poetry" |
-| **Imagem** | URL da capa do livro | "catalogue/images/products/..." |
-
-### 🔧 Configurações do Scraper
-
-```python
-# scraping/core.py
-SCRAPING_CONFIG = {
-    "base_url": "https://books.toscrape.com",
-    "delay_between_requests": 1,  # segundos
-    "max_retries": 3,
-    "timeout": 30
-}
-```
+| **id** | Número único de identificação do registro do livro | 1 |
+| **title** | Nome completo do livro | "A Light in the Attic" |
+| **price** | Valor em libras (£) | 51.77 |
+| **rating** | Avaliação de 1 a 5 estrelas | 3 |
+| **stock** | Estoque disponível do livro | 22 |
+| **category** | Gênero/categoria do livro | "Poetry" |
+| **cover** | Capa do livro em bytes | "\xff\xd8\xff\xe0\x00\x10JFIF" |
 
 ## 🚀 Executando a API
 
