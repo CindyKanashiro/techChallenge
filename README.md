@@ -83,7 +83,7 @@ graph TD
 
 ### 📋 Pré-requisitos
 
-- Python 3.8+
+- Python 3.12+
 - pip ou Poetry
 - Git
 
@@ -470,9 +470,9 @@ const books = await BookAPI.getBooks({ category: 'Fiction', limit: 20 });
 | Nome | GitHub |
 |------|--------|
 | **Cindy Kanashiro** | [@cindykanashiro](https://github.com/cindykanashiro) |
-| **André Rafael** | [@andrerafael](https://github.com/andrerafael) |
-| **Claudio Lavezzo** | [@claudiolavezzo](https://github.com/claudiolavezzo) |
-| **Rogério Cabriotte** | [@rogeriocabriotte](https://github.com/rogeriocabriotte) |
-| **Carlos Eduardo** | [@carloseduardo](https://github.com/carloseduardo) |
+| **André Rafael** | [@Andre-Rafael](https://github.com/Andre-Rafael) |
+| **Cláudio Lavezzo** | [@clavezzo-25](https://github.com/clavezzo-25) |
+| **Rogério Cabriotte** | [@cabriotte](https://github.com/cabriotte) |
+| **Carlos Eduardo** | [@c-sant](https://github.com/c-sant) |
 
 ---
