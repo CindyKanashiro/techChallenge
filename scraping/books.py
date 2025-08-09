@@ -1,3 +1,4 @@
+from logging import info
 import re
 import sqlite3
 from typing import Literal
@@ -36,7 +37,7 @@ def fetch_catalogue_data() -> pd.DataFrame:
     book_urls = fetch_book_urls(catalogue_url)
 
     for i, book_url in enumerate(book_urls):
-        print(f'{i}/{len(book_urls)}')
+        info(f'{i}/{len(book_urls)}')
         book_details = fetch_book_details(book_url, i)
         df = pd.concat([df, pd.DataFrame([book_details])], ignore_index=True)
     return df

@@ -19,8 +19,8 @@ def generate_csv_file():
     info("csv file created")
 
 
-def create_model(CSV_FILENAME):
-    df = pd.read_csv(CSV_FILENAME)
+def create_model(csv_filename: str):
+    df = pd.read_csv(csv_filename)
 
     x = df["title"].fillna("")
     y = df["category"]
@@ -35,13 +35,7 @@ def create_model(CSV_FILENAME):
 
     
     y_pred = pipeline.predict(X_test)
-    print(classification_report(y_test, y_pred))
+    info(classification_report(y_test, y_pred))
 
     joblib.dump(pipeline, "data/model_books.pkl")
     pipeline.feature_names_in_
-
-create_model(CSV_FILENAME)
-
-if __name__ == "__main__":
-    generate_csv_file()
-    create_model(CSV_FILENAME)
