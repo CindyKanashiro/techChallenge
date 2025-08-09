@@ -38,4 +38,3 @@ def create_model(csv_filename: str):
     info(classification_report(y_test, y_pred))
 
     joblib.dump(pipeline, "data/model_books.pkl")
-    pipeline.feature_names_in_
