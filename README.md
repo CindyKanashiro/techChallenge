@@ -92,7 +92,7 @@ graph TD
 ```bash
 # Clone o repositório
 git clone https://github.com/seu-usuario/techChallenge.git
-cd tech-challenge-book-api
+cd techChallenge
 
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
