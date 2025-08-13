@@ -91,7 +91,7 @@ graph TD
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/tech-challenge-book-api.git
+git clone https://github.com/seu-usuario/techChallenge.git
 cd tech-challenge-book-api
 
 python -m venv venv
